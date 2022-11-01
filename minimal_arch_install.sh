@@ -3,7 +3,7 @@
 # Redirect all commands to file
 exec > >(tee "install.log") >&1
 
-# print commands as they are executed
+# Print commands as they are executed
 set -x
 
 # Base install
@@ -36,6 +36,10 @@ arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 # Base install finished...
 echo "Minimal install finished."
+echo
+
+# Disable printing of commands, since these next ones are too verbose
+set +x
 
 # Install additional packages?
 read -n 1 -r -p "Install additional packages [y/N]? "
@@ -43,7 +47,7 @@ echo # move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
-	read -n 1 -r -p "exa htop mlocate openssh broot ranger nnn strace lsof [y/N]? " exa
+	read -n 1 -r -p "exa htop mlocate openssh broot ranger nnn strace ltrace lsof [y/N]? " exa
 	echo # move to a new line
 	read -n 1 -r -p "gcc cmake git [y/N]? " gcc
 	echo # move to a new line
@@ -60,31 +64,31 @@ then
 	
 	if [[ $exa =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt exa htop mlocate openssh broot ranger nnn strace lsof
+		pacstrap /mnt --needed exa htop mlocate openssh broot ranger nnn strace ltrace lsof
 	fi
 	if [[ $gcc =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt gcc cmake git
+		pacstrap /mnt --needed gcc cmake git
 	fi
 	if [[ $python =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt python python-pip python-setuptools
+		pacstrap /mnt --needed python python-pip python-setuptools
 	fi
 	if [[ $xorg =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty
+		pacstrap /mnt --needed xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty
 	fi
 	if [[ $i3 =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt i3
+		pacstrap /mnt --needed i3
 	fi
 	if [[ $xfce4 =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt xfce4
+		pacstrap /mnt --needed xfce4
 	fi
 	if [[ $chromium =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt chromium
+		pacstrap /mnt --needed chromium
 	fi
 	
 fi
