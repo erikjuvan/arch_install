@@ -3,7 +3,7 @@
 # Redirect all commands to file
 exec > >(tee "install.log") >&1
 
-if [ $1 != "skip-base" ]
+if [ "$1" != "skip-base" ]
 then
 
 	# Print commands as they are executed
