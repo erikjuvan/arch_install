@@ -3,43 +3,51 @@
 # Redirect all commands to file
 exec > >(tee "install.log") >&1
 
-# Print commands as they are executed
-set -x
+if [ $1 != "skip-base" ]
+then
 
-# Base install
-umount -R /mnt
-wipefs -a /dev/sda
-echo 'type=83' | sfdisk /dev/sda
-yes | mkfs.ext4 /dev/sda1
+	# Print commands as they are executed
+	set -x
+
+	# Base install
+	umount -R /mnt
+	wipefs -a /dev/sda
+	echo 'type=83' | sfdisk /dev/sda
+	yes | mkfs.ext4 /dev/sda1
+	mount /dev/sda1 /mnt
+	pacstrap -K /mnt base linux grub dhcpcd sudo fish vim
+	genfstab -U /mnt >> /mnt/etc/fstab
+	arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Europe/Ljubljana /etc/localtime"
+	arch-chroot /mnt /bin/bash -c "hwclock --systohc"
+	arch-chroot /mnt /bin/bash -c "sed -i 's/#en_US.UTF/en_US.UTF/' /etc/locale.gen"
+	arch-chroot /mnt /bin/bash -c "locale-gen"
+	arch-chroot /mnt /bin/bash -c "echo 'LANG=en_US.UTF-8' > /etc/locale.conf"
+	# Add hostname...
+	read -p "Hostname: " hostname
+	arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
+	# Root password
+	arch-chroot /mnt /bin/bash -c "passwd"
+	# Add new user...
+	read -p "Add user: " user
+	arch-chroot /mnt /bin/bash -c "useradd -m -s /bin/fish $user"
+	arch-chroot /mnt /bin/bash -c "passwd $user"
+	arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) ALL/' /etc/sudoers"
+	# Enable dhcpcd
+	arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
+	# Setup grub
+	arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
+	arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
+	# Base install finished...
+	echo "Minimal install finished."
+	echo
+
+	# Disable printing of commands, since these next ones are too verbose
+	set +x
+
+fi
+
+# Mount, in case we skipped the base install
 mount /dev/sda1 /mnt
-pacstrap -K /mnt base linux grub dhcpcd sudo fish vim
-genfstab -U /mnt >> /mnt/etc/fstab
-arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Europe/Ljubljana /etc/localtime"
-arch-chroot /mnt /bin/bash -c "hwclock --systohc"
-arch-chroot /mnt /bin/bash -c "sed -i 's/#en_US.UTF/en_US.UTF/' /etc/locale.gen"
-arch-chroot /mnt /bin/bash -c "locale-gen"
-arch-chroot /mnt /bin/bash -c "echo 'LANG=en_US.UTF-8' > /etc/locale.conf"
-# Add hostname...
-read -p "Hostname: " hostname
-arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
-# Root password
-arch-chroot /mnt /bin/bash -c "passwd"
-# Add new user...
-read -p "Add user: " user
-arch-chroot /mnt /bin/bash -c "useradd -m -s /bin/fish $user"
-arch-chroot /mnt /bin/bash -c "passwd $user"
-arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) ALL/' /etc/sudoers"
-# Enable dhcpcd
-arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
-# Setup grub
-arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
-arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
-# Base install finished...
-echo "Minimal install finished."
-echo
-
-# Disable printing of commands, since these next ones are too verbose
-set +x
 
 # Install additional packages?
 read -n 1 -r -p "Install additional packages [y/N]? "
