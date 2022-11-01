@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Redirect all commands to file
+exec > >(tee "install.log") >&1
+
 # print commands as they are executed
 set -x
 
