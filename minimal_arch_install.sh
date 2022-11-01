@@ -6,7 +6,7 @@ exec > >(tee "install.log") >&1
 # print commands as they are executed
 set -x
 
-umount -R /mnt1
+umount -R /mnt
 wipefs -a /dev/sda
 echo 'type=83' | sfdisk /dev/sda
 yes | mkfs.ext4 /dev/sda1
@@ -31,7 +31,7 @@ done
 
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash -c "pacman -Syy"
-arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Region/City /etc/localtime"
+arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Europe/Ljubljana /etc/localtime"
 arch-chroot /mnt /bin/bash -c "hwclock --systohc"
 arch-chroot /mnt /bin/bash -c "sed -i 's/#en_US.UTF/en_US.UTF/' /etc/locale.gen"
 arch-chroot /mnt /bin/bash -c "locale-gen"
