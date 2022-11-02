@@ -13,7 +13,7 @@ then
 	set -x
 
 	# Base install
-	umount -R /mnt
+	umount -R /mnt 2> /dev/null
 	wipefs -a /dev/sda
 	echo 'type=83' | sfdisk /dev/sda
 	yes | mkfs.ext4 /dev/sda1
@@ -49,14 +49,14 @@ then
 
 fi
 
-# Mount, in case we skipped the base install
-mount /dev/sda1 /mnt
-
 # Install additional packages?
 read -n 1 -r -p "Install additional packages [y/N]? "
 echo # move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
+
+	# Mount, in case we skipped the base install
+	mount /dev/sda1 /mnt 2> /dev/null
 
 	read -n 1 -r -p "exa htop mlocate openssh broot ranger nnn strace ltrace lsof [y/N]? " exa
 	echo # move to a new line
@@ -104,7 +104,7 @@ then
 	
 fi
 
-umount -R /mnt
+umount -R /mnt 2> /dev/null
 
 # Finished
-echo "Install finished."
+echo "Done."
