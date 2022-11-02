@@ -3,7 +3,10 @@
 # Redirect all commands to file
 exec > >(tee "install.log") >&1
 
-if [ "$1" != "skip-base" ]
+# Wipe drive and perform clean base install?
+read -n 1 -r -p "Wipe drive and perform clean base install [y/N]? "
+echo # move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
 	# Print commands as they are executed
