@@ -29,9 +29,11 @@ then
 	read -p "Hostname: " hostname
 	arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
 	# Root password
+	echo "Enter password for root: "
 	arch-chroot /mnt /bin/bash -c "passwd"
 	# Add new user...
 	read -p "Add user: " user
+	echo "Enter password for $user: "
 	arch-chroot /mnt /bin/bash -c "useradd -m -s /bin/fish $user"
 	arch-chroot /mnt /bin/bash -c "passwd $user"
 	arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) ALL/' /etc/sudoers"
