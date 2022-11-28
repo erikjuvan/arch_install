@@ -18,7 +18,7 @@ then
 	echo 'type=83' | sfdisk /dev/sda
 	yes | mkfs.ext4 /dev/sda1
 	mount /dev/sda1 /mnt
-	pacstrap -K /mnt base linux grub dhcpcd sudo fish vim
+	pacstrap -K /mnt base linux grub dhcpcd sudo fish neovim
 	genfstab -U /mnt >> /mnt/etc/fstab
 	arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Europe/Ljubljana /etc/localtime"
 	arch-chroot /mnt /bin/bash -c "hwclock --systohc"
