@@ -77,7 +77,7 @@ then
 	
 	if [[ $exa =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt --needed exa htop mlocate openssh broot ranger nnn strace ltrace lsof
+		pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof
 	fi
 	if [[ $gcc =~ ^[Yy]$ ]]
 	then
