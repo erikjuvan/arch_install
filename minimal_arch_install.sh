@@ -60,7 +60,7 @@ then
 	# Mount, in case we skipped the base install
 	mount /dev/sda1 /mnt 2> /dev/null
 
-	read -n 1 -r -p "exa htop mlocate openssh broot ranger nnn strace ltrace lsof [y/N]? " exa
+	read -n 1 -r -p "exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof [y/N]? " exa
 	echo # move to a new line
 	read -n 1 -r -p "gcc cmake git [y/N]? " gcc
 	echo # move to a new line
@@ -73,6 +73,8 @@ then
 	read -n 1 -r -p "xfce4 [y/N]? " xfce4
 	echo # move to a new line
 	read -n 1 -r -p "chromium [y/N]? " chromium
+	echo # move to a new line
+    read -n 1 -r -p "lightdm [y/N]? " lightdm
 	echo # move to a new line
 	
 	if [[ $exa =~ ^[Yy]$ ]]
@@ -99,9 +101,9 @@ then
 	then
 		pacstrap /mnt --needed xfce4
 	fi
-	if [[ $chromium =~ ^[Yy]$ ]]
+	if [[ $lightdm =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt --needed chromium
+		pacstrap /mnt --needed lightdm-gtk-greeter
 	fi
 	
 fi
