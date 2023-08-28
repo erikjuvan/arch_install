@@ -62,7 +62,7 @@ then
 
 	read -n 1 -r -p "exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof [y/N]? " exa
 	echo # move to a new line
-	read -n 1 -r -p "gcc cmake git [y/N]? " gcc
+	read -n 1 -r -p "gcc cmake git make base-devel [y/N]? " gcc
 	echo # move to a new line
 	read -n 1 -r -p "python python-pip python-setuptools [y/N]? " python
 	echo # move to a new line
@@ -83,7 +83,7 @@ then
 	fi
 	if [[ $gcc =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt --needed gcc cmake git
+		pacstrap /mnt --needed gcc cmake git make base-devel
 	fi
 	if [[ $python =~ ^[Yy]$ ]]
 	then
