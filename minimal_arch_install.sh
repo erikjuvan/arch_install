@@ -8,7 +8,6 @@ read -n 1 -r -p "Wipe drive and perform clean base install [y/N]? "
 echo # move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-
 	# Print commands as they are executed
 	set -x
 
@@ -18,7 +17,7 @@ then
 	echo 'type=83' | sfdisk /dev/sda
 	yes | mkfs.ext4 /dev/sda1
 	mount /dev/sda1 /mnt
-	pacstrap -K /mnt base linux grub dhcpcd sudo fish neovim
+	pacstrap -K /mnt base linux
 	genfstab -U /mnt >> /mnt/etc/fstab
 	arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Europe/Ljubljana /etc/localtime"
 	arch-chroot /mnt /bin/bash -c "hwclock --systohc"
@@ -37,26 +36,48 @@ then
 	arch-chroot /mnt /bin/bash -c "useradd -m -s /bin/fish $user"
 	arch-chroot /mnt /bin/bash -c "passwd $user"
 	arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) ALL/' /etc/sudoers"
-	# Enable dhcpcd
-	arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
-	# Setup grub
-	arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
-	arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 	# Base install finished...
 	echo "Minimal install finished."
 	echo
-
-	# Disable printing of commands, since these next ones are too verbose
-	set +x
-
 fi
+
+# Install grub?
+read -n 1 -r -p "Install grub [y/N]? "
+echo # move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	pacstrap /mnt grub
+ 	# Setup grub
+	arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
+	arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
+fi
+
+# Install dhcpcd?
+read -n 1 -r -p "Install dhcpcd [y/N]? "
+echo # move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	pacstrap /mnt dhcpcd
+ 	# Enable dhcpcd
+	arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"	
+fi
+
+# Install true basics?
+read -n 1 -r -p "sudo fish neovim [y/N]? "
+echo # move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	pacstrap /mnt sudo fish neovim
+fi
+
+# Disable printing of commands, since these next ones are too verbose
+set +x
 
 # Install additional packages?
 read -n 1 -r -p "Install additional packages [y/N]? "
 echo # move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-
 	# Mount, in case we skipped the base install
 	mount /dev/sda1 /mnt 2> /dev/null
 
@@ -105,7 +126,6 @@ then
 	then
 		pacstrap /mnt --needed lightdm-gtk-greeter
 	fi
-	
 fi
 
 umount -R /mnt 2> /dev/null
