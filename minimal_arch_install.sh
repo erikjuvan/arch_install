@@ -115,7 +115,7 @@ then
 	echo # move to a new line
 	read -n 1 -r -p "xfce4 [y/N]? " xfce4
 	echo # move to a new line
-	read -n 1 -r -p "openbox [y/N]? " openbox
+	read -n 1 -r -p "openbox obconf [y/N]? " openbox
 	echo # move to a new line
 	read -n 1 -r -p "lightdm [y/N]? " lightdm
 	echo # move to a new line
@@ -148,7 +148,7 @@ then
 	fi
 	if [[ $openbox =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt --needed openbox
+		pacstrap /mnt --needed openbox obconf
 	fi
 	if [[ $lightdm =~ ^[Yy]$ ]]
 	then
