@@ -25,9 +25,9 @@ arch-chroot /mnt /bin/bash -c "echo 'LANG=en_US.UTF-8' > /etc/locale.conf"
 # Add hostname...
 arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
 # Root password
-arch-chroot /mnt /bin/bash -c "usermod --password $(echo aa | openssl passwd -1 -stdin) root"
+arch-chroot /mnt /bin/bash -c "usermod --password=$(echo aa | openssl passwd -1 -stdin) root"
 # Add new user...
-arch-chroot /mnt /bin/bash -c "useradd -m -s /usr//bin/fish $username"
+arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish $username"
 arch-chroot /mnt /bin/bash -c "usermod --password=$(echo aa | openssl passwd -1 -stdin) $username"
 
 pacstrap /mnt grub
@@ -38,7 +38,7 @@ pacstrap /mnt dhcpcd
 arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
 
 pacstrap /mnt sudo
-arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\$username ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers"
+arch-chroot /mnt /bin/bash -c "sed -i \"s/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/\" /etc/sudoers"
 
 pacstrap /mnt neovim
 pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn fd fzf openssh man-db less base-devel git make xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi chromium
