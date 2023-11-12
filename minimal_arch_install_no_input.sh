@@ -28,7 +28,7 @@ arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
 arch-chroot /mnt /bin/bash -c "usermod --password $(echo aa | openssl passwd -1 -stdin) root"
 # Add new user...
 arch-chroot /mnt /bin/bash -c "useradd -m -s /usr//bin/fish $username"
-arch-chroot /mnt /bin/bash -c "usermod --password $(echo aa | openssl passwd -1 -stdin) $username"
+arch-chroot /mnt /bin/bash -c "usermod --password=$(echo aa | openssl passwd -1 -stdin) $username"
 
 pacstrap /mnt grub
 arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
