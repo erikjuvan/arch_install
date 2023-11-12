@@ -67,11 +67,14 @@ then
     arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers"
 
     # Install aditional packages
-    pacstrap /mnt os-prober man-db less exa htop mlocate ncdu openssh broot strace ltrace lsof
+    pacstrap /mnt os-prober openssh man-db less htop exa mlocate ncdu broot ranger fzf fd strace ltrace lsof
     pacstrap /mnt gcc cmake git make python python-pip python-setuptools
-    pacstrap /mnt xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 dmenu openbox obconf lightdm lightdm-gtk-greeter xf86-video-amdgpu pulseaudio mesa
+    pacstrap /mnt xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi openbox obconf lightdm lightdm-gtk-greeter xf86-video-amdgpu pulseaudio mesa
     pacstrap /mnt iwd wpa_supplicant networkmanager
     pacstrap /mnt chromium unrar unzip wget
+
+    # Notable mentions
+    # dmenu
 
     # Setup grub
     arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --bootloader-id=grub --efi-directory=/boot/efi"
