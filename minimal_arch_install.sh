@@ -103,7 +103,7 @@ then
 	# Mount, in case we skipped the base install
 	mount /dev/sda1 /mnt 2> /dev/null
 
-	read -n 1 -r -p "exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof [y/N]? " exa
+	read -n 1 -r -p "exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof fzf fd man-db less [y/N]? " exa
 	echo # move to a new line
 	read -n 1 -r -p "gcc cmake git make base-devel [y/N]? " gcc
 	echo # move to a new line
@@ -111,7 +111,7 @@ then
 	echo # move to a new line
 	read -n 1 -r -p "xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty [y/N]? " xorg
 	echo # move to a new line
-	read -n 1 -r -p "i3 [y/N]? " i3
+	read -n 1 -r -p "i3 rofi [y/N]? " i3
 	echo # move to a new line
 	read -n 1 -r -p "xfce4 [y/N]? " xfce4
 	echo # move to a new line
@@ -124,7 +124,7 @@ then
 	
 	if [[ $exa =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof
+		pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof fzf fd man-db less
 	fi
 	if [[ $gcc =~ ^[Yy]$ ]]
 	then
@@ -140,7 +140,7 @@ then
 	fi
 	if [[ $i3 =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt --needed i3
+		pacstrap /mnt --needed i3 rofi
 	fi
 	if [[ $xfce4 =~ ^[Yy]$ ]]
 	then

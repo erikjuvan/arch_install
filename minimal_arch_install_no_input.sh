@@ -56,3 +56,6 @@ umount -R /mnt 2> /dev/null
 
 # Eject CD rom
 eject -r -m
+
+# Reboot
+reboot
