@@ -49,13 +49,15 @@ arch-chroot /mnt /bin/bash -c "printf 'xset r rate 230 30\nsetxkbmap -option cap
 
 # Autologin
 arch-chroot /mnt /bin/bash -c "mkdir -p /etc/systemd/system/getty@tty1.service.d/"
-arch-chroot /mnt /bin/bash -c "printf \"[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '-p -f -- \\u' --noclear --autologin $username %I \$TERM\" > /etc/systemd/system/getty@tty1.service.d/autologin.conf"
+arch-chroot /mnt /bin/bash -c "echo \"[Service]\" > /etc/systemd/system/getty@tty1.service.d/autologin.conf"
+arch-chroot /mnt /bin/bash -c "echo \"ExecStart=\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
+arch-chroot /mnt /bin/bash -c "echo \"ExecStart=-/sbin/agetty -o '-p -f -- \\\\\\u' --noclear --autologin $username %I \\\$TERM\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
 
 # Unmount
 umount -R /mnt 2> /dev/null
 
 # Eject CD rom
-eject -r -m
+# eject -r -m # This doesn't work. I don't know how to do this without crashing the install.
 
 # Reboot
 reboot
