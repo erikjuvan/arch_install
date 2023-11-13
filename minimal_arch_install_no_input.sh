@@ -60,4 +60,4 @@ umount -R /mnt 2> /dev/null
 # eject -r -m # This doesn't work. I don't know how to do this without crashing the install.
 
 # Reboot
-reboot
+# reboot # don't reboot since we can't eject CD rom
