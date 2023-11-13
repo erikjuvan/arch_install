@@ -103,7 +103,7 @@ then
 	# Mount, in case we skipped the base install
 	mount /dev/sda1 /mnt 2> /dev/null
 
-	read -n 1 -r -p "exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof fzf fd man-db less [y/N]? " exa
+	read -n 1 -r -p "exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof fzf fd man-db less the_silver_searcher [y/N]? " exa
 	echo # move to a new line
 	read -n 1 -r -p "gcc cmake git make base-devel [y/N]? " gcc
 	echo # move to a new line
@@ -124,7 +124,7 @@ then
 	
 	if [[ $exa =~ ^[Yy]$ ]]
 	then
-		pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof fzf fd man-db less
+		pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn strace ltrace lsof fzf fd man-db less the_silver_searcher
 	fi
 	if [[ $gcc =~ ^[Yy]$ ]]
 	then

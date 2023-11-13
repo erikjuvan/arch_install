@@ -41,7 +41,7 @@ pacstrap /mnt sudo
 arch-chroot /mnt /bin/bash -c "sed -i \"s/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/\" /etc/sudoers"
 
 pacstrap /mnt neovim
-pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn fd fzf openssh man-db less base-devel git make xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi chromium
+pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher openssh man-db less base-devel git make xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi chromium
 
 # Create xinitrc and xprofile
 arch-chroot /mnt /bin/bash -c "printf '[ -f /etc/xprofile ] && . /etc/xprofile\n[ -f ~/.xprofile ] && . ~/.xprofile\n\n#exec i3 -V -d all >~/i3log 2>&1\nexec i3\n#exec openbox' > /home/$user/.xinitrc"
