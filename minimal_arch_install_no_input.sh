@@ -53,6 +53,9 @@ arch-chroot /mnt /bin/bash -c "echo \"[Service]\" > /etc/systemd/system/getty@tt
 arch-chroot /mnt /bin/bash -c "echo \"ExecStart=\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
 arch-chroot /mnt /bin/bash -c "echo \"ExecStart=-/sbin/agetty -o '-p -f -- \\\\\\u' --noclear --autologin $username %I \\\$TERM\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
 
+# Copy install log to user directory
+cp install.log /mnt/home/$user
+
 # Unmount
 umount -R /mnt 2> /dev/null
 
