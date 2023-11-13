@@ -44,7 +44,7 @@ pacstrap /mnt neovim
 pacstrap /mnt --needed exa htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher openssh man-db less base-devel git make xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi chromium
 
 # Create xinitrc and xprofile
-arch-chroot /mnt /bin/bash -c "printf '[ -f /etc/xprofile ] && . /etc/xprofile\n[ -f ~/.xprofile ] && . ~/.xprofile\n\n#exec i3 -V -d all >~/i3log 2>&1\nexec i3\n#exec openbox' > /home/$user/.xinitrc"
+arch-chroot /mnt /bin/bash -c "printf '[ -f /etc/xprofile ] && . /etc/xprofile\n[ -f ~/.xprofile ] && . ~/.xprofile\n\n#exec i3 -V -d all >~/i3log 2>&1\nexec i3\n#exec openbox' > /home/$username/.xinitrc"
 arch-chroot /mnt /bin/bash -c "printf 'xset r rate 230 30\nsetxkbmap -option caps:escape' > /home/$username/.xprofile"
 
 # Autologin
@@ -54,7 +54,7 @@ arch-chroot /mnt /bin/bash -c "echo \"ExecStart=\" >> /etc/systemd/system/getty@
 arch-chroot /mnt /bin/bash -c "echo \"ExecStart=-/sbin/agetty -o '-p -f -- \\\\\\u' --noclear --autologin $username %I \\\$TERM\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
 
 # Copy install log to user directory
-cp install.log /mnt/home/$user
+cp install.log /mnt/home/$username
 
 # Unmount
 umount -R /mnt 2> /dev/null
