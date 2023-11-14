@@ -67,7 +67,7 @@ then
     arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers"
 
     # Install aditional packages
-    pacstrap /mnt os-prober openssh man-db less htop exa mlocate ncdu broot ranger fzf fd strace ltrace lsof the_silver_searcher
+    pacstrap /mnt os-prober openssh man-db less htop eza mlocate ncdu broot ranger fzf fd strace ltrace lsof the_silver_searcher
     pacstrap /mnt gcc cmake git make python python-pip python-setuptools
     pacstrap /mnt xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi openbox obconf lightdm lightdm-gtk-greeter xf86-video-amdgpu pulseaudio mesa
     pacstrap /mnt iwd wpa_supplicant networkmanager
