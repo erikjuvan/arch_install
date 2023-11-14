@@ -41,8 +41,8 @@ pacstrap /mnt sudo
 arch-chroot /mnt /bin/bash -c "sed -i \"s/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/\" /etc/sudoers"
 
 pacstrap /mnt neovim
-pacstrap /mnt --needed eza htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher 
-pacstrap /mnt --needed strace ltrace lsof openssh man-db less base-devel git make
+pacstrap /mnt --needed eza htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher
+pacstrap /mnt --needed strace ltrace lsof openssh man-db tldr less base-devel git make
 pacstrap /mnt --needed xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi
 pacstrap /mnt --needed chromium
 
