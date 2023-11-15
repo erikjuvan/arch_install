@@ -49,14 +49,20 @@ arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
 # Setup grub
 arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
-# Create xinitrc and xprofile
-arch-chroot /mnt /bin/bash -c "printf '[ -f /etc/xprofile ] && . /etc/xprofile\n[ -f ~/.xprofile ] && . ~/.xprofile\n\n#exec i3 -V -d all >~/i3log 2>&1\nexec i3\n#exec openbox' > /home/$username/.xinitrc"
-arch-chroot /mnt /bin/bash -c "printf 'xset r rate 200 40\nsetxkbmap -option caps:escape' > /home/$username/.xprofile"
 # Autologin
 arch-chroot /mnt /bin/bash -c "mkdir -p /etc/systemd/system/getty@tty1.service.d/"
 arch-chroot /mnt /bin/bash -c "echo \"[Service]\" > /etc/systemd/system/getty@tty1.service.d/autologin.conf"
 arch-chroot /mnt /bin/bash -c "echo \"ExecStart=\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
 arch-chroot /mnt /bin/bash -c "echo \"ExecStart=-/sbin/agetty -o '-p -f -- \\\\\\u' --noclear --autologin $username %I \\\$TERM\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
+# Deploy my github dotfiles
+arch-chroot /mnt sudo -u $username /bin/bash -c "git clone https://github.com/erikjuvan/dotfiles ~/.dotfiles"
+arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.xinitrc ~"
+arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.xprofile ~"
+arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.gitconfig ~"
+arch-chroot /mnt sudo -u $username /bin/bash -c "mkdir -p ~/.config/alacritty"
+arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/alacritty/alacritty.yml ~/.config/alacritty"
+arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/fish/config.fish ~/.config/fish"
+arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/nvim ~/.config/"
 # Copy install log to user directory
 cp install.log /mnt/home/$username
 # Unmount
