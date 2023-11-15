@@ -1,0 +1,12 @@
+fish grub dhcpcd sudo neovim
+man-db tldr less
+eza htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher strace ltrace lsof
+base-devel gcc gdb git make cmake lazygit
+python python-pip python-setuptools
+xorg-server xorg-xinit xorg-xset xorg-xsetroot xclip
+ttf-dejavu alacritty i3 rofi
+chromium unrar unzip wget tmux
+
+# Notable mentions
+# kdiff3 fdupes
+# openbox obconf lightdm lightdm-gtk-greeter

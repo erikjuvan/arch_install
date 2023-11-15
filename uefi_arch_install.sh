@@ -23,7 +23,6 @@ timedatectl set-ntp true
 ##############
 umount -R /mnt 2> /dev/null
 wipefs -a /dev/sda
-
 # Define the disk
 disk="/dev/sda"  # Change X to the appropriate letter for your disk
 # Create GPT partition table
@@ -35,44 +34,32 @@ sudo parted -s $disk "set 1 esp on"
 sudo parted -s $disk "mkpart primary ext4 301MiB -10GiB"
 # Create the third partition (10GB, linux swap)
 sudo parted -s $disk "mkpart primary linux-swap -10GiB 100%"
-
 # Make filesystems
 mkfs.fat -F32 /dev/sda1
 mkfs.ext4 /dev/sda2
 mkswap /dev/sda3
-
 # Mount /
 mount /dev/sda2 /mnt
-
 # Mount /boot/efi
 mkdir -p /mnt/boot/efi
 mount /dev/sda1 /mnt/boot/efi
-
 # Mount /home
 mkdir -p /mnt/home
 mount /dev/sdb1 /mnt/home
-
 # Swap
 swapon /dev/sda3
 
 ####################
 # Install packages #
 ####################
-pacstrap -K /mnt base linux linux-firmware fish
-
-# Install aditional packages
-pacstrap /mnt grub dhcpcd sudo neovim
-pacstrap /mnt openssh man-db tldr less nnn htop eza mlocate ncdu broot ranger fzf fd the_silver_searcher strace ltrace lsof
-pacstrap /mnt base-devel gcc cmake git lazygit make python python-pip python-setuptools
-pacstrap /mnt xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi
-pacstrap /mnt chromium unrar unzip wget
-
+# Install base system
+pacstrap -K /mnt base linux linux-firmware
+# Install additional packages
+grep -v '^#' packages.txt | xargs pacstrap /mnt --needed
+# Install this scripts specific packages
 pacstrap /mnt openbox obconf lightdm lightdm-gtk-greeter xf86-video-amdgpu pulseaudio mesa
 pacstrap /mnt iwd wpa_supplicant networkmanager
 pacstrap /mnt efibootmgr os-prober
-
-# Notable mentions
-# dmenu
 
 ####################
 # Configure system #

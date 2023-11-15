@@ -21,18 +21,10 @@ mount /dev/sda1 /mnt
 ####################
 # Install packages #
 ####################
-pacstrap -K /mnt base linux linux-firmware fish
-
-pacstrap /mnt grub dhcpcd sudo neovim
-pacstrap /mnt man-db tldr less
-pacstrap /mnt eza htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher strace ltrace lsof
-pacstrap /mnt base-devel gcc gdb git make cmake lazygit
-pacstrap /mnt python python-pip python-setuptools
-pacstrap /mnt xorg-server xorg-xinit xorg-xset xorg-xsetroot xclip
-pacstrap /mnt ttf-dejavu alacritty i3 rofi
-pacstrap /mnt chromium unrar unzip wget tmux
-
-# kdiff3 fdupes 
+# Install base system
+pacstrap -K /mnt base linux linux-firmware
+# Install additional packages
+grep -v '^#' packages.txt | xargs pacstrap /mnt --needed
 
 ####################
 # Configure system #
