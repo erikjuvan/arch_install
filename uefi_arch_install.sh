@@ -61,8 +61,8 @@ swapon /dev/sda3
 pacstrap -K /mnt base linux linux-firmware fish
 
 # Install aditional packages
-pacstrap /mnt dhcpcd sudo grub neovim
-pacstrap /mnt openssh man-db tldr less htop eza mlocate ncdu broot ranger fzf fd the_silver_searcher strace ltrace lsof
+pacstrap /mnt grub dhcpcd sudo neovim
+pacstrap /mnt openssh man-db tldr less nnn htop eza mlocate ncdu broot ranger fzf fd the_silver_searcher strace ltrace lsof
 pacstrap /mnt base-devel gcc cmake git lazygit make python python-pip python-setuptools
 pacstrap /mnt xorg-server xorg-xinit xorg-xset ttf-dejavu alacritty i3 rofi
 pacstrap /mnt chromium unrar unzip wget
