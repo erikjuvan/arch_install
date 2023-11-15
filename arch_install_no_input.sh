@@ -61,6 +61,7 @@ arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.xprofile ~"
 arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.gitconfig ~"
 arch-chroot /mnt sudo -u $username /bin/bash -c "mkdir -p ~/.config/alacritty"
 arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/alacritty/alacritty.yml ~/.config/alacritty"
+arch-chroot /mnt sudo -u $username /bin/bash -c "mkdir -p ~/.config/fish"
 arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/fish/config.fish ~/.config/fish"
 arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/nvim ~/.config/"
 # Copy install log to user directory
