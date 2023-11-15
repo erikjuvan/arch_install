@@ -55,7 +55,7 @@ swapon /dev/sda3
 # Install base system
 pacstrap -K /mnt base linux linux-firmware
 # Install additional packages
-grep -v '^#' packages.txt | xargs pacstrap /mnt --needed
+sed 's/#.*//' packages.txt | xargs pacstrap /mnt --needed
 # Install this scripts specific packages
 pacstrap /mnt openbox obconf lightdm lightdm-gtk-greeter xf86-video-amdgpu pulseaudio mesa
 pacstrap /mnt iwd wpa_supplicant networkmanager
@@ -90,7 +90,7 @@ arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --bootloader-id=
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 # Create xinitrc and xprofile
 arch-chroot /mnt /bin/bash -c "printf '[ -f /etc/xprofile ] && . /etc/xprofile\n[ -f ~/.xprofile ] && . ~/.xprofile\n\n#exec i3 -V -d all >~/i3log 2>&1\nexec i3\n#exec openbox' > /home/$user/.xinitrc"
-arch-chroot /mnt /bin/bash -c "printf 'xset r rate 230 30\nsetxkbmap -option caps:escape' > /home/$user/.xprofile"
+arch-chroot /mnt /bin/bash -c "printf 'xset r rate 200 40\nsetxkbmap -option caps:escape' > /home/$user/.xprofile"
 # Autologin
 arch-chroot /mnt /bin/bash -c "mkdir -p /etc/systemd/system/getty@tty1.service.d/"
 arch-chroot /mnt /bin/bash -c "echo \"[Service]\" > /etc/systemd/system/getty@tty1.service.d/autologin.conf"
