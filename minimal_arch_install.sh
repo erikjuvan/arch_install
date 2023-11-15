@@ -44,17 +44,17 @@ arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
 echo "Enter password for root: "
 arch-chroot /mnt /bin/bash -c "passwd"
 # Add new user...
-read -p "Add user: " user
-echo "Enter password for $user: "
-arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish $user"
-arch-chroot /mnt /bin/bash -c "passwd $user"
+read -p "Add user: " username
+echo "Enter password for $username: "
+arch-chroot /mnt /bin/bash -c "useradd -m -s /bin/bash $username"
+arch-chroot /mnt /bin/bash -c "passwd $username"
 # Setup grub
 arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 # Enable dhcpcd
 arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"	
 # Add user to sudoers
-arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) ALL/' /etc/sudoers"
+arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) ALL/' /etc/sudoers"
 # Install fish?
 read -n 1 -r -p "Install fish [y/N]? "
 echo # move to a new line
@@ -62,7 +62,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     pacstrap /mnt fish
     # Change user shell to fish
-    arch-chroot /mnt /bin/bash -c "chsh -s /usr/bin/fish $user"
+    arch-chroot /mnt /bin/bash -c "chsh -s /usr/bin/fish $username"
 fi
 # Copy install log to user directory
 cp install.log /mnt/home/$username

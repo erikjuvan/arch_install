@@ -77,12 +77,12 @@ arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
 echo "Enter password for root: "
 arch-chroot /mnt /bin/bash -c "passwd"
 # Add new user...
-read -p "Add user: " user
-echo "Enter password for $user: "
-arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish -G sys,wheel,users,adm,log $user"
-arch-chroot /mnt /bin/bash -c "passwd $user"
+read -p "Add user: " username
+echo "Enter password for $username: "
+arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish -G sys,wheel,users,adm,log $username"
+arch-chroot /mnt /bin/bash -c "passwd $username"
 # Give user sudo privileges
-arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$user ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers"
+arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers"
 # Enable dhcpcd
 arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
 # Setup grub for EFI
@@ -90,7 +90,7 @@ arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --bootloader-id=
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 # Create xinitrc and xprofile
 arch-chroot /mnt /bin/bash -c "printf '[ -f /etc/xprofile ] && . /etc/xprofile\n[ -f ~/.xprofile ] && . ~/.xprofile\n\n#exec i3 -V -d all >~/i3log 2>&1\nexec i3\n#exec openbox' > /home/$user/.xinitrc"
-arch-chroot /mnt /bin/bash -c "printf 'xset r rate 200 40\nsetxkbmap -option caps:escape' > /home/$user/.xprofile"
+arch-chroot /mnt /bin/bash -c "printf 'xset r rate 200 40\nsetxkbmap -option caps:escape' > /home/$username/.xprofile"
 # Autologin
 arch-chroot /mnt /bin/bash -c "mkdir -p /etc/systemd/system/getty@tty1.service.d/"
 arch-chroot /mnt /bin/bash -c "echo \"[Service]\" > /etc/systemd/system/getty@tty1.service.d/autologin.conf"
