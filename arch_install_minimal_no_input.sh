@@ -3,16 +3,11 @@
 # Redirect all commands to file
 exec > >(tee "install.log") >&1
 
-# Wipe drive and perform clean base install?
-read -n 1 -r -p "Wipe drive and perform clean base install [y/N]? "
-echo # move to a new line
-if [[ ! $REPLY =~ ^[Yy]$ ]]
-then
-    exit 1
-fi
-
 # Print commands as they are executed
 set -x
+
+hostname=arch
+username=erik
 
 ##############
 # Disk setup #
@@ -37,24 +32,20 @@ arch-chroot /mnt /bin/bash -c "hwclock --systohc"
 arch-chroot /mnt /bin/bash -c "sed -i 's/#en_US.UTF/en_US.UTF/' /etc/locale.gen"
 arch-chroot /mnt /bin/bash -c "locale-gen"
 arch-chroot /mnt /bin/bash -c "echo 'LANG=en_US.UTF-8' > /etc/locale.conf"
-# Add hostname...
-read -p "Hostname: " hostname
+# Add hostname
 arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
 # Root password
-echo "Enter password for root: "
-arch-chroot /mnt /bin/bash -c "passwd"
-# Add new user...
-read -p "Add user: " username
-echo "Enter password for $username: "
-arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish $username"
-arch-chroot /mnt /bin/bash -c "passwd $username"
+arch-chroot /mnt /bin/bash -c "usermod --password=$(echo aa | openssl passwd -1 -stdin) root"
+# Add new user
+arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish -G sys,wheel,users,adm,log $username"
+arch-chroot /mnt /bin/bash -c "usermod --password=$(echo aa | openssl passwd -1 -stdin) $username"
+# Give user sudo privileges
+arch-chroot /mnt /bin/bash -c "sed -i \"s/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/\" /etc/sudoers"
+# Enable dhcpcd
+arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
 # Setup grub
 arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
-# Enable dhcpcd
-arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"	
-# Add user to sudoers
-arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers"
 # Copy install log to user directory
 cp install.log /mnt/home/$username
 # Unmount

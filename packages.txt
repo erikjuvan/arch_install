@@ -1,3 +1,4 @@
+linux-firmware
 fish grub dhcpcd sudo neovim
 man-db tldr less
 eza htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher strace ltrace lsof
