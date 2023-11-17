@@ -35,10 +35,10 @@ arch-chroot /mnt /bin/bash -c "echo 'LANG=en_US.UTF-8' > /etc/locale.conf"
 # Add hostname
 arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
 # Root password
-arch-chroot /mnt /bin/bash -c "usermod --password=$(echo aa | openssl passwd -1 -stdin) root"
+arch-chroot /mnt /bin/bash -c "usermod --password='$(echo aa | openssl passwd -1 -stdin)' root"
 # Add new user
 arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish -G sys,wheel,users,adm,log $username"
-arch-chroot /mnt /bin/bash -c "usermod --password=$(echo aa | openssl passwd -1 -stdin) $username"
+arch-chroot /mnt /bin/bash -c "usermod --password='$(echo aa | openssl passwd -1 -stdin)' $username"
 # Give user sudo privileges
 arch-chroot /mnt /bin/bash -c "sed -i \"s/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/\" /etc/sudoers"
 # Enable dhcpcd
