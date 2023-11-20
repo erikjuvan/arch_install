@@ -1,12 +1,14 @@
 linux-firmware
 fish grub dhcpcd sudo neovim
-man-db tldr less
-eza htop mlocate ncdu openssh broot ranger nnn fd fzf the_silver_searcher strace ltrace lsof
-base-devel gcc gdb git make cmake lazygit
-python python-pip python-setuptools
+man-db tldr less htop
+eza mlocate ncdu broot ranger nnn
+fd fzf the_silver_searcher ripgrep bfs
+strace ltrace lsof
 xorg-server xorg-xinit xorg-xset xorg-xsetroot xclip
 ttf-dejavu alacritty i3 rofi
-chromium unrar unzip wget tmux
+base-devel gcc gdb git make cmake lazygit
+python python-pip python-setuptools
+openssh unrar unzip wget tmux chromium
 
 # Notable mentions
 # kdiff3 fdupes
