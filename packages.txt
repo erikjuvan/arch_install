@@ -4,7 +4,7 @@ man-db tldr less htop
 eza mlocate ncdu broot ranger nnn
 fd fzf the_silver_searcher ripgrep bfs
 strace ltrace lsof
-xorg-server xorg-xinit xorg-xset xorg-xsetroot xclip
+xorg-server xorg-xinit xorg-xset xorg-xsetroot xclip xorg-xrandr
 ttf-dejavu alacritty i3 rofi
 base-devel gcc gdb git make cmake lazygit
 python python-pip python-setuptools
