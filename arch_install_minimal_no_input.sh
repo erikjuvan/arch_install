@@ -21,7 +21,8 @@ mount /dev/sda1 /mnt
 ####################
 # Install packages #
 ####################
-pacstrap -K /mnt base linux grub dhcpcd sudo fish
+# Install base system
+sed 's/#.*//' base_packages.txt | sed '/^$/d' | xargs pacstrap -K /mnt
 
 ####################
 # Configure system #

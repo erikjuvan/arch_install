@@ -26,7 +26,8 @@ mount /dev/sda1 /mnt
 ####################
 # Install packages #
 ####################
-pacstrap -K /mnt base linux grub dhcpcd sudo fish
+# Install base system
+sed 's/#.*//' base_packages.txt | sed '/^$/d' | xargs pacstrap -K /mnt
 
 ####################
 # Configure system #
@@ -52,7 +53,7 @@ arch-chroot /mnt /bin/bash -c "passwd $username"
 arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 # Enable dhcpcd
-arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"	
+arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
 # Add user to sudoers
 arch-chroot /mnt /bin/bash -c "sed -i 's/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers"
 # Copy install log to user directory

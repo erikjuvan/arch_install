@@ -22,9 +22,9 @@ mount /dev/sda1 /mnt
 # Install packages #
 ####################
 # Install base system
-pacstrap -K /mnt base linux
+sed 's/#.*//' base_packages.txt | sed '/^$/d' | xargs pacstrap -K /mnt
 # Install additional packages
-sed 's/#.*//' packages.txt | xargs pacstrap /mnt --needed
+sed 's/#.*//' packages.txt | sed '/^$/d' | xargs pacstrap /mnt --needed
 
 ####################
 # Configure system #
