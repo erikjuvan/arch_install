@@ -1,7 +1,7 @@
 linux-firmware
 fish grub dhcpcd sudo neovim
 man-db tldr less htop
-eza mlocate ncdu broot ranger nnn
+eza plocate ncdu broot ranger nnn
 fd fzf the_silver_searcher ripgrep bfs
 strace ltrace lsof
 xorg-server xorg-xinit xorg-xset xorg-xsetroot xclip xorg-xrandr
