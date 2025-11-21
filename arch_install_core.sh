@@ -2,11 +2,12 @@
 set -euo pipefail # exit on errors, treat unset variables as errors, fail if any command in a pipeline fails
 set -x # Print commands as they are executed
 trap 'echo "Error on line $LINENO"; exit 1' ERR
+exec > >(tee "install_core.log") 2>&1 # Redirect all commands to file
 
-# --------------------------------------------------------------
-# LOGGING
-# --------------------------------------------------------------
-exec > >(tee "install_base.log") 2>&1 # Redirect all commands to file
+echo "==========================="
+echo "Core installation started."
+echo "==========================="
+echo
 
 # --------------------------------------------------------------
 # CONFIGURATION
@@ -19,6 +20,25 @@ PARTITION="${DISK}1"
 TIMEZONE="Europe/Ljubljana"
 LOCALE="en_US.UTF-8"
 CORE_PACKAGES_FILE="packages_core.txt"
+
+# --------------------------------------------------------------
+# SAFETY CHECK
+# --------------------------------------------------------------
+if [[ ! -d /run/archiso ]]; then
+    echo "WARNING: You are not running from the Arch ISO environment!"
+    echo "Only continue if you KNOW what you're doing."
+fi
+
+echo
+echo "This script will DESTROY data on $DISK"
+echo "This is destructive and CANNOT be undone."
+
+read -rp "Type YES (all caps) to continue: " confirm
+
+if [[ "$confirm" != "YES" ]]; then
+    echo "Aborted."
+    exit 1
+fi
 
 # --------------------------------------------------------------
 # DISK SETUP (BIOS-style MBR, single ext4 partition)
@@ -36,12 +56,12 @@ mkfs.ext4 -F ${PARTITION}
 mount ${PARTITION} /mnt
 
 # --------------------------------------------------------------
-# BASE INSTALL
+# CORE INSTALL
 # --------------------------------------------------------------
 # For faster mirrors
 reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
-# Base install
+# Core install
 pacstrap -K /mnt $(sed -E 's/#.*//; /^\s*$/d' "$CORE_PACKAGES_FILE") --needed
 
 # Copy mirrorlist to installed system
@@ -98,7 +118,11 @@ EOF
 # --------------------------------------------------------------
 # COPY LOG + CLEANUP
 # --------------------------------------------------------------
-cp install_base.log "/mnt/home/$USERNAME"/
+cp install_core.log "/mnt/home/$USERNAME"/
 umount -R /mnt || true
 
-echo "Base installation complete."
+echo
+echo "==========================="
+echo "Core installation complete."
+echo "==========================="
+echo

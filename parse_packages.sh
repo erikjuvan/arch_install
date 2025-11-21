@@ -9,10 +9,10 @@ parse_packages() {
     local file="$2"
 
     if [[ -z "$option" || -z "$file" ]]; then
-        return 0
+        return 1
     fi
     if [[ ! -f "$file" ]]; then
-        return 0
+        return 1
     fi
 
     # lowercase requested option for case-insensitive comparison
@@ -47,7 +47,7 @@ parse_packages() {
 
     # If the option wasn't found anywhere
     if ! $found; then
-        return 0
+        return 1
     fi
 
     # ---------- Second pass: collect global packages (before first option block)
@@ -102,7 +102,21 @@ parse_packages() {
 
     # option FOUND output combined packages, return 1
     printf '%s %s\n' "$global_packages" "$option_packages"
-    return 1
+    return 0
+}
+
+# -----------------------------
+# List all available options in the file
+# -----------------------------
+list_options() {
+    local file="$1"
+    if [[ ! -f "$file" ]]; then
+        echo "File not found: $file"
+        return 1
+    fi
+
+    grep -i '^\[option:[[:alnum:]_-]\+\]' "$file" | \
+        sed -E 's/^\[option:([[:alnum:]_-]+)\].*/\1/i'
 }
 
 test_parse_packages() {
@@ -145,4 +159,3 @@ test_parse_packages() {
     parse_packages openBox packages_gui.txt
     echo ------------------
 }
-
