@@ -21,19 +21,6 @@ LOCALE="en_US.UTF-8"
 CORE_PACKAGES_FILE="packages_core.txt"
 
 # --------------------------------------------------------------
-# SAFETY: only run in VM from an iso
-# --------------------------------------------------------------
-if ! lspci | grep -qi virtualbox ; then
-    echo "ERROR: Not running in a VirtualBox VM — aborting!"
-    exit 1
-fi
-
-if [[ "$(hostname)" != "archiso" ]]; then
-    echo "ERROR: Must be run from the Arch installer ISO!"
-    exit 1
-fi
-
-# --------------------------------------------------------------
 # DISK SETUP (BIOS-style MBR, single ext4 partition)
 # --------------------------------------------------------------
 umount -R /mnt 2>/dev/null || true
