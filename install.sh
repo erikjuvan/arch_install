@@ -73,11 +73,12 @@ fi
 # --------------------------------------------------------------
 # FINALIZE
 # --------------------------------------------------------------
-cp install.log "/mnt/home/$USERNAME/"
-umount -R /mnt || true
-
 echo "======================"
 echo "Installation complete."
 echo "======================"
 echo
 echo "Remove ISO and reboot manually."
+
+cp install.log "/mnt/home/$USERNAME/"
+
+umount -R /mnt || true

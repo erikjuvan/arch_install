@@ -66,10 +66,11 @@ EOF
 # --------------------------------------------------------------
 # FINALIZE
 # --------------------------------------------------------------
-cp install_base.log "/mnt/home/$USERNAME/"
-umount -R /mnt || true
-
 echo "==========================="
 echo "Base installation complete."
 echo "==========================="
 echo
+
+cp install_base.log "/mnt/home/$USERNAME/"
+
+umount -R /mnt || true

@@ -116,13 +116,14 @@ grub-mkconfig -o /boot/grub/grub.cfg
 EOF
 
 # --------------------------------------------------------------
-# COPY LOG + CLEANUP
+# FINALIZE
 # --------------------------------------------------------------
-cp install_core.log "/mnt/home/$USERNAME"/
-umount -R /mnt || true
-
 echo
 echo "==========================="
 echo "Core installation complete."
 echo "==========================="
 echo
+
+cp install_core.log "/mnt/home/$USERNAME"/
+
+umount -R /mnt || true
