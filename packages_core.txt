@@ -1,1 +1,5 @@
-base linux grub dhcpcd sudo
+base
+linux
+grub
+dhcpcd
+sudo

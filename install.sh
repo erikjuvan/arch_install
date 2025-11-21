@@ -4,20 +4,19 @@ set -x # Print commands as they are executed
 trap 'echo "Error on line $LINENO"; exit 1' ERR
 exec > >(tee "install.log") 2>&1 # Redirect all commands to file
 
-echo "==========================="
+echo "====================="
 echo "Installation started."
-echo "==========================="
+echo "====================="
 echo
 
 # --------------------------------------------------------------
 # CONFIGURATION
 # --------------------------------------------------------------
-CORE_INSTALLER_SCRIPT=arch_install_core.sh
-BASE_PACKAGES_FILE="packages_base.txt"
-GUI_PACKAGES_FILE="packages_gui.txt"
-PACKAGE_PARSER_SCRIPT="parse_packages.sh"
+BASE_INSTALLER_SCRIPT=install_base.sh
+EXTRA_PACKAGES_FILE=packages_extra.txt
+GUI_PACKAGES_FILE=packages_gui.txt
+PACKAGE_PARSER_SCRIPT=parse_packages.sh
 DOTFILES_REPO="https://github.com/erikjuvan/dotfiles"
-DESKTOP_ENV="${DESKTOP_ENV:-none}"  # For options see packages_gui.txt
 
 # --------------------------------------------------------------
 # SOURCE GUI PACKAGE PARSER SCRIPT
@@ -25,18 +24,15 @@ DESKTOP_ENV="${DESKTOP_ENV:-none}"  # For options see packages_gui.txt
 source "./$PACKAGE_PARSER_SCRIPT"
 
 # --------------------------------------------------------------
-# LIST GUI PACKAGE OPTIONS AND CHOSEN OPTION
+# LIST GUI PACKAGE OPTIONS AND CHOOSE OPTION
 # --------------------------------------------------------------
-echo "Available DE/WM (choose one by setting DESKTOP_ENV):"
 list_options "$GUI_PACKAGES_FILE"
-echo "Choosing: $DESKTOP_ENV"
+read -rp "Choose GUI [press Enter to skip]: " DESKTOP_ENV
 
 # --------------------------------------------------------------
-# CALL CORE INSTALLER
+# CALL BASE INSTALLER
 # --------------------------------------------------------------
-# This will do disk setup, core packages, user, GRUB, autologin
-# Also variables from core script are available
-source "./$CORE_INSTALLER_SCRIPT"
+source "./$BASE_INSTALLER_SCRIPT"
 
 # --------------------------------------------------------------
 # MOUNT ROOT PARTITION
@@ -45,14 +41,14 @@ source "./$CORE_INSTALLER_SCRIPT"
 mount "$PARTITION" /mnt
 
 # --------------------------------------------------------------
-# INSTALL ADDITIONAL (BASE) PACKAGES - setup my base of work
+# INSTALL EXTRA PACKAGES
 # --------------------------------------------------------------
-pacstrap -K /mnt $(sed -E 's/#.*//; /^\s*$/d' "$BASE_PACKAGES_FILE") --needed
+pacstrap -K /mnt $(sed -E 's/#.*//; /^\s*$/d' "$EXTRA_PACKAGES_FILE") --needed
 
 # --------------------------------------------------------------
 # INSTALL OPTIONAL DE/WM AND GUI PACKAGES
 # --------------------------------------------------------------
-if [[ "$DESKTOP_ENV" != "none" ]]; then
+if [[ -n "$DESKTOP_ENV" ]]; then # test if DESKTOP_ENV is not empty
     # Capture packages
     GUI_PACKAGES=$(parse_packages "$DESKTOP_ENV" "$GUI_PACKAGES_FILE")
     SCRIPT_EXIT_CODE=$?
@@ -62,40 +58,19 @@ if [[ "$DESKTOP_ENV" != "none" ]]; then
         pacstrap /mnt $GUI_PACKAGES --needed
         arch-chroot /mnt systemctl enable sddm
     else
-        echo "No GUI packages to install."
+        echo "Warning: Invalid GUI package chosen."
     fi
 fi
 
 # --------------------------------------------------------------
-# DEPLOY DOTFILES
+# DEPLOY REMAINING DOTFILES
 # --------------------------------------------------------------
 arch-chroot /mnt sudo -u "$USERNAME" bash <<EOF
 set -e
 DOTDIR="/home/$USERNAME/.dotfiles"
-git clone --depth=1 "$DOTFILES_REPO" "\$DOTDIR" || true
-
-ln -sf "\$DOTDIR/.xinitrc" "/home/$USERNAME/.xinitrc"
-ln -sf "\$DOTDIR/.xprofile" "/home/$USERNAME/.xprofile"
-ln -sf "\$DOTDIR/.gitconfig" "/home/$USERNAME/.gitconfig"
 
 mkdir -p "/home/$USERNAME/.config/alacritty"
 ln -sf "\$DOTDIR/.config/alacritty/alacritty.yml" "/home/$USERNAME/.config/alacritty/alacritty.yml"
-
-mkdir -p "/home/$USERNAME/.config/fish"
-ln -sf "\$DOTDIR/.config/fish/config.fish" "/home/$USERNAME/.config/fish/config.fish"
-
-ln -sf "\$DOTDIR/.config/nvim" "/home/$USERNAME/.config/nvim" || true
-EOF
-
-# --------------------------------------------------------------
-# USE FISH AS THE NEW DEFAULT SHELL IF FISH INSTALLED
-# --------------------------------------------------------------
-arch-chroot /mnt bash <<EOF
-# --- Set fish as shell if installed ---
-if command -v /usr/bin/fish >/dev/null 2>&1; then
-    grep -qxF '/usr/bin/fish' /etc/shells || echo '/usr/bin/fish' >> /etc/shells
-    usermod -s /usr/bin/fish $USERNAME
-fi
 EOF
 
 # --------------------------------------------------------------

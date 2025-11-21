@@ -4,9 +4,9 @@ set -x # Print commands as they are executed
 trap 'echo "Error on line $LINENO"; exit 1' ERR
 exec > >(tee "install_core.log") 2>&1 # Redirect all commands to file
 
-echo "==========================="
+echo "=========================="
 echo "Core installation started."
-echo "==========================="
+echo "=========================="
 echo
 
 # --------------------------------------------------------------

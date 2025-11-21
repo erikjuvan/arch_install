@@ -1,8 +1,10 @@
 # Core GUI tools shared across any installed DE/WM
-alacritty rofi
+alacritty
+rofi
 chromium
 ttf-dejavu
-xorg-server xorg-xinit
+xorg-server
+xorg-xinit
 sddm # default display manager should work for all DE/WM
 
 # Options
@@ -17,7 +19,7 @@ sway swaybg waybar
 awesome xfce4-terminal thunar
 
 [option:Hyprland]
-hyprland swaybg waybar
+hyprland swaybg waybar kitty
 
 [option:spwm]
 bspwm sxhkd rofi xterm
