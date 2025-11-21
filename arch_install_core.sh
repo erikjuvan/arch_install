@@ -105,13 +105,13 @@ systemctl enable dhcpcd || true
 grub-install --target=i386-pc "$DISK"
 grub-mkconfig -o /boot/grub/grub.cfg
 
-# Autologin on tty1
-mkdir -p /etc/systemd/system/getty@tty1.service.d/
-cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf <<EOA
-[Service]
-ExecStart=
-ExecStart=-/sbin/agetty --autologin $USERNAME --noclear %I \$TERM
-EOA
+# Autologin on tty1 (currently disabled since it can interfere with a display manager and isn't worth the trouble honestly)
+# mkdir -p /etc/systemd/system/getty@tty1.service.d/
+# cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf <<EOA
+# [Service]
+# ExecStart=
+# ExecStart=-/sbin/agetty --autologin $USERNAME --noclear %I \$TERM
+# EOA
 
 EOF
 
