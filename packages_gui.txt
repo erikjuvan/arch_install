@@ -1,0 +1,43 @@
+# Core GUI tools shared across any installed DE/WM
+alacritty
+rofi
+chromium
+ttf-dejavu
+xorg-server
+xorg-xinit
+sddm # default display manager should work for all DE/WM
+
+# Options
+
+[option:i3]
+i3-wm i3status dmenu
+
+[option:Sway]
+sway swaybg waybar
+
+[option:Awesome]
+awesome xfce4-terminal thunar
+
+[option:Hyprland]
+hyprland swaybg waybar kitty
+
+[option:spwm]
+bspwm sxhkd rofi xterm
+
+[option:Openbox]
+openbox obconf tint2
+
+[option:Fluxbox]
+fluxbox fbpanel xterm
+
+[option:Xfce]
+xfce4 xfce4-goodies lightdm lightdm-gtk-greeter
+
+[option:LXDE]
+lxde lxde-common lxterminal pcmanfm
+
+[option:KDE]
+plasma-desktop kde-cli-tools konsole dolphin
+
+[option:GNOME]
+gnome gnome-terminal nautilus

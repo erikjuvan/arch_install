@@ -1,0 +1,13 @@
+linux-firmware
+fish
+neovim
+man-db
+base-devel
+git
+gcc
+make
+cmake
+python
+less
+htop
+unzip
