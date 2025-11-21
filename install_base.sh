@@ -14,6 +14,7 @@ echo
 # --------------------------------------------------------------
 CORE_INSTALLER_SCRIPT=install_core.sh
 BASE_PACKAGES_FILE="packages_base.txt"
+DOTFILES_REPO="https://github.com/erikjuvan/dotfiles"
 
 # --------------------------------------------------------------
 # CALL CORE INSTALLER

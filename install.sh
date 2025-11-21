@@ -16,7 +16,6 @@ BASE_INSTALLER_SCRIPT=install_base.sh
 EXTRA_PACKAGES_FILE=packages_extra.txt
 GUI_PACKAGES_FILE=packages_gui.txt
 PACKAGE_PARSER_SCRIPT=parse_packages.sh
-DOTFILES_REPO="https://github.com/erikjuvan/dotfiles"
 
 # --------------------------------------------------------------
 # SOURCE GUI PACKAGE PARSER SCRIPT
@@ -55,23 +54,21 @@ if [[ -n "$DESKTOP_ENV" ]]; then # test if DESKTOP_ENV is not empty
 
     # Only proceed if packages were found
     if [[ $SCRIPT_EXIT_CODE -eq 0 ]]; then
+        # Install GUI packages
         pacstrap /mnt $GUI_PACKAGES --needed
+
+        # Enable SDDM
         arch-chroot /mnt systemctl enable sddm
+
+        # dofiles config alacritty
+        arch-chroot /mnt sudo -u "$USERNAME" bash -c "
+        mkdir -p /home/$USERNAME/.config/alacritty
+        ln -sf /home/$USERNAME/.dotfiles/.config/alacritty/alacritty.yml /home/$USERNAME/.config/alacritty/alacritty.yml
+        "
     else
         echo "Warning: Invalid GUI package chosen."
     fi
 fi
-
-# --------------------------------------------------------------
-# DEPLOY REMAINING DOTFILES
-# --------------------------------------------------------------
-arch-chroot /mnt sudo -u "$USERNAME" bash <<EOF
-set -e
-DOTDIR="/home/$USERNAME/.dotfiles"
-
-mkdir -p "/home/$USERNAME/.config/alacritty"
-ln -sf "\$DOTDIR/.config/alacritty/alacritty.yml" "/home/$USERNAME/.config/alacritty/alacritty.yml"
-EOF
 
 # --------------------------------------------------------------
 # FINALIZE
