@@ -22,9 +22,6 @@ hyprland swaybg waybar
 [option:spwm]
 bspwm sxhkd rofi xterm
 
-[option:dwm]
-dwm dmenu st xterm
-
 [option:Openbox]
 openbox obconf tint2
 
