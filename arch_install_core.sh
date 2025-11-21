@@ -91,7 +91,7 @@ echo "$HOSTNAME" > /etc/hostname
 echo "root:$PASSWORD" | chpasswd
 
 # User + sudo
-useradd -m -s /usr/bin/bash -G wheel,sys,adm,log,users "$USERNAME"
+useradd -m -s /bin/bash -G wheel,sys,adm,log,users "$USERNAME"
 echo "$USERNAME:$PASSWORD" | chpasswd
 
 # Sudo: user gets passwordless sudo

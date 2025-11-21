@@ -88,6 +88,17 @@ ln -sf "\$DOTDIR/.config/nvim" "/home/$USERNAME/.config/nvim" || true
 EOF
 
 # --------------------------------------------------------------
+# USE FISH AS THE NEW DEFAULT SHELL IF FISH INSTALLED
+# --------------------------------------------------------------
+arch-chroot /mnt bash <<EOF
+# --- Set fish as shell if installed ---
+if command -v /usr/bin/fish >/dev/null 2>&1; then
+    grep -qxF '/usr/bin/fish' /etc/shells || echo '/usr/bin/fish' >> /etc/shells
+    usermod -s /usr/bin/fish $USERNAME
+fi
+EOF
+
+# --------------------------------------------------------------
 # FINALIZE
 # --------------------------------------------------------------
 cp install.log "/mnt/home/$USERNAME/"
