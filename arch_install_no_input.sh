@@ -1,76 +1,72 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail # exit on errors, treat unset variables as errors, fail if any command in a pipeline fails
+set -x # Print commands as they are executed
+trap 'echo "Error on line $LINENO"; exit 1' ERR
 
-# Redirect all commands to file
-exec > >(tee "install.log") >&1
+# --------------------------------------------------------------
+# CONFIGURATION
+# --------------------------------------------------------------
+BASE_PACKAGES_FILE="packages_base.txt"
+GUI_PACKAGES_FILE="packages_gui.txt"
+GUI_PARSES_SCRIPT="parse_gui_packages.sh"
+DOTFILES_REPO="https://github.com/erikjuvan/dotfiles"
+DESKTOP_ENV="${DESKTOP_ENV:-none}"  # For options see packages_gui.txt
 
-# Print commands as they are executed
-set -x
+# --------------------------------------------------------------
+# CALL BASE INSTALLER
+# --------------------------------------------------------------
+# This will do disk setup, base packages, user, GRUB, autologin
+# Also variables from base script are available
+source ./arch_install_base.sh
 
-hostname=arch
-username=erik
+# --------------------------------------------------------------
+# MOUNT ROOT PARTITION
+# --------------------------------------------------------------
+# Make sure /mnt is mounted for extra package installation
+mount "$PARTITION" /mnt
 
-##############
-# Disk setup #
-##############
-umount -R /mnt 2> /dev/null
-wipefs -a /dev/sda
-echo 'type=83' | sfdisk /dev/sda
-yes | mkfs.ext4 /dev/sda1
-mount /dev/sda1 /mnt
+# --------------------------------------------------------------
+# INSTALL ADDITIONAL (BASE) PACKAGES - setup my base of work
+# --------------------------------------------------------------
+pacstrap -K /mnt $(sed -E 's/#.*//; /^\s*$/d' "$BASE_PACKAGES_FILE") --needed
 
-####################
-# Install packages #
-####################
-# Install base system
-sed 's/#.*//' base_packages.txt | sed '/^$/d' | xargs pacstrap -K /mnt
-# Install additional packages
-sed 's/#.*//' packages.txt | sed '/^$/d' | xargs pacstrap /mnt --needed
+# --------------------------------------------------------------
+# INSTALL OPTIONAL DE/WM AND GUI PACKAGES
+# --------------------------------------------------------------
+if [[ "$DESKTOP_ENV" != "none" ]]; then
+    source "$GUI_PARSES_SCRIPT"
 
-####################
-# Configure system #
-####################
-genfstab -U /mnt >> /mnt/etc/fstab
-arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Europe/Ljubljana /etc/localtime"
-arch-chroot /mnt /bin/bash -c "hwclock --systohc"
-arch-chroot /mnt /bin/bash -c "sed -i 's/#en_US.UTF/en_US.UTF/' /etc/locale.gen"
-arch-chroot /mnt /bin/bash -c "locale-gen"
-arch-chroot /mnt /bin/bash -c "echo 'LANG=en_US.UTF-8' > /etc/locale.conf"
-# Add hostname
-arch-chroot /mnt /bin/bash -c "echo $hostname > /etc/hostname"
-# Root password
-arch-chroot /mnt /bin/bash -c "usermod --password='$(echo aa | openssl passwd -1 -stdin)' root"
-# Add new user
-arch-chroot /mnt /bin/bash -c "useradd -m -s /usr/bin/fish -G sys,wheel,users,adm,log $username"
-arch-chroot /mnt /bin/bash -c "usermod --password='$(echo aa | openssl passwd -1 -stdin)' $username"
-# Give user sudo privileges
-arch-chroot /mnt /bin/bash -c "sed -i \"s/root ALL=(ALL:ALL) ALL/root ALL=(ALL:ALL) ALL\n$username ALL=(ALL:ALL) NOPASSWD: ALL/\" /etc/sudoers"
-# Enable dhcpcd
-arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
-# Setup grub
-arch-chroot /mnt /bin/bash -c "grub-install --target=i386-pc /dev/sda"
-arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
-# Autologin
-arch-chroot /mnt /bin/bash -c "mkdir -p /etc/systemd/system/getty@tty1.service.d/"
-arch-chroot /mnt /bin/bash -c "echo \"[Service]\" > /etc/systemd/system/getty@tty1.service.d/autologin.conf"
-arch-chroot /mnt /bin/bash -c "echo \"ExecStart=\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
-arch-chroot /mnt /bin/bash -c "echo \"ExecStart=-/sbin/agetty -o '-p -f -- \\\\\\u' --noclear --autologin $username %I \\\$TERM\" >> /etc/systemd/system/getty@tty1.service.d/autologin.conf"
-# Deploy my github dotfiles
-arch-chroot /mnt sudo -u $username /bin/bash -c "git clone https://github.com/erikjuvan/dotfiles ~/.dotfiles"
-arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.xinitrc ~"
-arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.xprofile ~"
-arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.gitconfig ~"
-arch-chroot /mnt sudo -u $username /bin/bash -c "mkdir -p ~/.config/alacritty"
-arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/alacritty/alacritty.yml ~/.config/alacritty"
-arch-chroot /mnt sudo -u $username /bin/bash -c "mkdir -p ~/.config/fish"
-arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/fish/config.fish ~/.config/fish"
-arch-chroot /mnt sudo -u $username /bin/bash -c "ln -sf ~/.dotfiles/.config/nvim ~/.config/"
-# Copy install log to user directory
-cp install.log /mnt/home/$username
-# Unmount
-umount -R /mnt 2> /dev/null
-# Eject CD rom TODO
-# eject -r -m # This doesn't work. I don't know how to do this without crashing the install.
-# Reboot TODO
-# reboot # don't reboot since we can't eject CD rom
-# Finished
-echo "Done."
+    if ! GUI_PACKAGES=$(parse_gui_packages "$DESKTOP_ENV" "$GUI_PACKAGES_FILE"); then
+        pacstrap /mnt $GUI_PACKAGES --needed
+        arch-chroot /mnt systemctl enable sddm
+    fi
+fi
+
+# --------------------------------------------------------------
+# DEPLOY DOTFILES
+# --------------------------------------------------------------
+arch-chroot /mnt sudo -u "$USERNAME" bash <<EOF
+set -e
+DOTDIR="/home/$USERNAME/.dotfiles"
+git clone --depth=1 "$DOTFILES_REPO" "\$DOTDIR" || true
+
+ln -sf "\$DOTDIR/.xinitrc" "/home/$USERNAME/.xinitrc"
+ln -sf "\$DOTDIR/.xprofile" "/home/$USERNAME/.xprofile"
+ln -sf "\$DOTDIR/.gitconfig" "/home/$USERNAME/.gitconfig"
+
+mkdir -p "/home/$USERNAME/.config/alacritty"
+ln -sf "\$DOTDIR/.config/alacritty/alacritty.yml" "/home/$USERNAME/.config/alacritty/alacritty.yml"
+
+mkdir -p "/home/$USERNAME/.config/fish"
+ln -sf "\$DOTDIR/.config/fish/config.fish" "/home/$USERNAME/.config/fish/config.fish"
+
+ln -sf "\$DOTDIR/.config/nvim" "/home/$USERNAME/.config/nvim" || true
+EOF
+
+# --------------------------------------------------------------
+# FINALIZE
+# --------------------------------------------------------------
+cp install.log "/mnt/home/$USERNAME/"
+umount -R /mnt || true
+
+echo "Normal installation complete. Remove ISO and reboot manually."

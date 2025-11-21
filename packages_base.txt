@@ -1,0 +1,9 @@
+linux-firmware
+fish neovim
+man-db tldr less htop
+eza plocate ncdu broot ranger nnn
+fd fzf the_silver_searcher ripgrep bfs
+strace ltrace lsof
+base-devel gcc gdb git make cmake
+python python-pip python-setuptools
+openssh unrar unzip wget tmux
