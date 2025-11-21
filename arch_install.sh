@@ -36,7 +36,7 @@ pacstrap -K /mnt $(sed -E 's/#.*//; /^\s*$/d' "$BASE_PACKAGES_FILE") --needed
 if [[ "$DESKTOP_ENV" != "none" ]]; then
     source "$GUI_PARSES_SCRIPT"
 
-    if ! GUI_PACKAGES=$(parse_gui_packages "$DESKTOP_ENV" "$GUI_PACKAGES_FILE"); then
+    if GUI_PACKAGES=$(parse_packages "$DESKTOP_ENV" "$GUI_PACKAGES_FILE"); then
         pacstrap /mnt $GUI_PACKAGES --needed
         arch-chroot /mnt systemctl enable sddm
     fi
