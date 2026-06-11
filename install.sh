@@ -57,6 +57,36 @@ if [[ -n "$DESKTOP_ENV" ]]; then # test if DESKTOP_ENV is not empty
         # Install GUI packages
         pacstrap /mnt $GUI_PACKAGES --needed
 
+        # Configure default GUI keyboard repeat and display resolution
+        arch-chroot /mnt bash <<'X11_DEFAULTS_EOF'
+set -e
+
+mkdir -p /etc/X11/xorg.conf.d
+cat > /etc/X11/xorg.conf.d/00-keyboard-rate.conf <<'EOC'
+Section "ServerFlags"
+    Option "AutoRepeat" "200 40"
+EndSection
+EOC
+
+touch /etc/xprofile
+if ! grep -q "arch_install GUI defaults" /etc/xprofile; then
+    cat >> /etc/xprofile <<'EOC'
+
+# arch_install GUI defaults
+if command -v xset >/dev/null 2>&1; then
+    xset r rate 200 40
+fi
+
+if command -v xrandr >/dev/null 2>&1; then
+    output="$(xrandr | awk '/ connected primary/{print $1; exit} / connected/{print $1; exit}')"
+    if [ -n "$output" ]; then
+        xrandr --output "$output" --mode 1920x1080 2>/dev/null || true
+    fi
+fi
+EOC
+fi
+X11_DEFAULTS_EOF
+
         # Enable SDDM
         arch-chroot /mnt systemctl enable sddm
 

@@ -5,6 +5,8 @@ chromium
 ttf-dejavu
 xorg-server
 xorg-xinit
+xorg-xrandr
+xorg-xset
 sddm # default display manager should work for all DE/WM
 
 # Options
